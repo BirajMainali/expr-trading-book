@@ -35,7 +35,8 @@ namespace Portfolio_Management.Controllers
                     name = y.StockName,
                     prefix = y.Prefix,
                     quantity = y.Quantity,
-                    openingAmount = y.OpeningRate
+                    openingAmount = y.OpeningRate,
+                    Date = y.RecDate.ToShortDateString()
                 }).ToListAsync();
                 return this.SendSuccess("Stocks", stocks);
             }
@@ -99,7 +100,7 @@ namespace Portfolio_Management.Controllers
             }
         }
 
-        [HttpDelete("Remove")]
+        [HttpPost("Remove/{id:long}")]
         public async Task<IActionResult> Remove(long id)
         {
             try

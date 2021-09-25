@@ -4,10 +4,11 @@ import axios from "axios";
 
 const viewModel = ref({
   id: Math.random(),
-  stockName: '',
-  Quantity: 0,
-  Prefix: '',
-  OpeningAmount: 0
+  name: '',
+  quantity: 0,
+  prefix: '',
+  openingAmount: 0,
+  date: Date.now().toFixed()
 });
 
 let stocks = ref({
@@ -15,38 +16,48 @@ let stocks = ref({
   data: []
 });
 
+const LoadInitial = () => {
+  const data = viewModel.value;
+  data.name = '';
+  data.quantity = 0;
+  data.prefix = '';
+  data.openingAmount = 0;
+}
+
 const getAddedStocks = async () => {
   try {
     stocks.value.data = (await axios.get("/api/Stock/Stocks")).data.data;
     stocks.value.isLoading = false
   } catch (e) {
-    this.$toast.error(e.response.data.error.message);
+    console.warn(e);
   }
 }
 const savePublish = async () => {
   try {
     if (!confirm("are you sure to publish")) return;
     const res = await axios.post("/api/Stock/New", {
-      StockName: viewModel.value.stockName,
-      prefix: viewModel.value.Prefix,
-      Quantity: viewModel.value.Quantity,
-      OpeningAmount: viewModel.value.OpeningAmount
+      StockName: viewModel.value.name,
+      prefix: viewModel.value.prefix,
+      Quantity: viewModel.value.quantity,
+      OpeningAmount: viewModel.value.openingAmount
     });
-    stocks.value.data.push(viewModel);
-    this.$toast.success(res.data.notify);
+    stocks.value.data.push({...viewModel.value});
+    LoadInitial();
+    console.warn(res.data.notify)
   } catch (e) {
-    this.$toast.error(e.response.data.error.message);
+
+    console.warn(e);
   }
 }
 const Remove = async (id) => {
   try {
     if (!confirm("are you sure to remove this stock")) return;
-    const res = await axios.delete(`/api/Stock/Remove/${id}`);
+    const res = await axios.post(`/api/Stock/Remove/${id}`);
     if (res.status === 200) {
       stocks.value.data = stocks.value.data.filter(x => x.id !== id);
     }
   } catch (e) {
-    this.$toast.error(e.response.data.error.message);
+    console.warn(e);
   }
 }
 
@@ -65,27 +76,27 @@ onMounted(async () => {
         <div class="col-4">
           <div class="form-group">
             <label for="Company">Publisher Company</label>
-            <input type="text" id="Company" v-model="viewModel.stockName" class="form-control"
+            <input type="text" id="Company" v-model="viewModel.name" class="form-control"
                    placeholder="Union life insurance" required>
           </div>
         </div>
         <div class="col">
           <div class="form-group">
             <label for="Quantity">Quantity</label>
-            <input type="number" id="Quantity" v-model="viewModel.Quantity" class="form-control" placeholder="1,00,00"
+            <input type="number" id="Quantity" v-model="viewModel.quantity" class="form-control" placeholder="1,00,00"
                    required>
           </div>
         </div>
         <div class="col">
           <div class="form-group">
             <label for="Prefix">Prefix</label>
-            <input type="text" id="Prefix" v-model="viewModel.Prefix" class="form-control" placeholder="ULI" required>
+            <input type="text" id="Prefix" v-model="viewModel.prefix" class="form-control" placeholder="ULI" required>
           </div>
         </div>
         <div class="col">
           <div class="form-group">
             <label for="OpeningAmount">Opening Amount</label>
-            <input type="number" id="OpeningAmount" v-model="viewModel.OpeningAmount" class="form-control"
+            <input type="number" id="OpeningAmount" v-model="viewModel.openingAmount" class="form-control"
                    placeholder="400" required>
           </div>
         </div>
@@ -119,7 +130,7 @@ onMounted(async () => {
           <td>{{ stock.prefix }}</td>
           <td>{{ stock.date }}</td>
           <td>{{ stock.quantity }}</td>
-          <td>{{stock.quantity}}</td>
+          <td>{{ stock.openingAmount }}</td>
           <td>
             <button class="btn btn-sm btn-danger" @click.prevent="Remove(stock.id)"> Remove</button>
           </td>
