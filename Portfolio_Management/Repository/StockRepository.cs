@@ -19,5 +19,6 @@ namespace Portfolio_Management.Repository
         public async Task<bool> IsPrefixUsed(string? prefix = null, long? excludedId = null) =>
             await CheckIfExistAsync(x =>
                 (excludedId == null || x.Id != excludedId) && x.Prefix.Trim().ToLower() == prefix.ToLower().Trim());
+
     }
 }

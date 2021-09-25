@@ -13,6 +13,7 @@ using Portfolio_Management.ViewModel;
 namespace Portfolio_Management.Controllers
 {
     [ApiController]
+    [Route("api/[controller]")]
     public class StockTransactionController : ControllerBase
     {
         private readonly IStockTransactionRepository _transactionRepository;
@@ -32,14 +33,15 @@ namespace Portfolio_Management.Controllers
         {
             try
             {
-                var transactions = await _transactionRepository.GetQueryable().OrderByDescending(x => x.TransactionDate)
-                    .Select(y => new
-                    {
-                        company = y.Stock.StockName,
-                        Quantity = y.Quantity,
-                        TransactionType = (y.TransactionType == TransactionType.Buy) ? "BUY" : "SELL",
-                        TransactionDate = y.TransactionDate.ToShortDateString(),
-                    }).ToListAsync();
+                var transactions = await _transactionRepository.GetQueryable().Select(x => new
+                {
+                    StockName = x.Stock,
+                    Quantity = x.Quantity,
+                    Price = x.Price,
+                    TransactionDate = x.TransactionDate.ToShortDateString(),
+                    TransactionType = (x.TransactionType == TransactionType.Buy) ? "BUY" : "SELL",
+                }).ToListAsync();
+
                 return this.SendSuccess("transactions", transactions);
             }
             catch (Exception e)
@@ -80,6 +82,27 @@ namespace Portfolio_Management.Controllers
                 return this.SendError(e.Message);
             }
         }
-        
+
+        [HttpGet("History/{id:long}")]
+        public async Task<IActionResult> History(long id)
+        {
+            try
+            {
+                var stock = await _stockRepository.FindOrThrowAsync(id);
+                var history = await _transactionRepository.GetQueryable().Where(x => x.StockId == id).Select(x => new
+                {
+                    StockName = x.Stock.StockName,
+                    Quantity = x.Quantity,
+                    Price = x.Price,
+                    TransactionDate = x.TransactionDate.ToShortDateString(),
+                    TransactionType = (x.TransactionType == TransactionType.Buy) ? "BUY" : "SELL",
+                }).ToListAsync();
+                return this.SendSuccess("history", history);
+            }
+            catch (Exception e)
+            {
+                return this.SendError(e.Message);
+            }
+        }
     }
 }

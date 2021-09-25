@@ -114,7 +114,7 @@ onMounted(async () => {
       <table class="table table-bordered table-striped">
         <thead>
         <tr>
-          <th>#</th>
+          <td>#</td>
           <td>Name</td>
           <td>Prefix</td>
           <td>Publish Date</td>

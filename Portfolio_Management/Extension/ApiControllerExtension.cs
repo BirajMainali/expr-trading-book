@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
-using Portfolio_Management.Entities;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace Portfolio_Management.Extension
 {
@@ -25,5 +23,6 @@ namespace Portfolio_Management.Extension
                 }
             });
         }
+        
     }
 }
