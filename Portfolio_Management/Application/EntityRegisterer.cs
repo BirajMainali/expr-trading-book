@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Portfolio_Management.Entities;
 
-namespace Portfolio_Management
+namespace Portfolio_Management.Application
 {
     public static class EntityRegisterer
     {
