@@ -1,6 +1,6 @@
 ﻿using System;
 using Portfolio_Management.Entities;
-using Portfolio_Management.Infrastructure.Enum;
+using Portfolio_Management.Enum;
 
 namespace Portfolio_Management.Dto
 {

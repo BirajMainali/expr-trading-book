@@ -24,7 +24,7 @@ namespace Portfolio_Management.Migrations
                     StockName = table.Column<string>(type: "text", nullable: true),
                     Prefix = table.Column<string>(type: "text", nullable: true),
                     Quantity = table.Column<long>(type: "bigint", nullable: false),
-                    OpeningRate = table.Column<decimal>(type: "numeric", nullable: false),
+                    OpeningAmount = table.Column<decimal>(type: "numeric", nullable: false),
                     ClosingRate = table.Column<decimal>(type: "numeric", nullable: true),
                     AuditLog = table.Column<string>(type: "text", nullable: true),
                     RecDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)

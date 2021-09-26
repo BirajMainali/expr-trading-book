@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-namespace Portfolio_Management.Infrastructure.Repository
+namespace Portfolio_Management.Repository
 {
     public class BaseRepository<T> : IBaseRepository<T> where T : class
     {
@@ -46,7 +46,22 @@ namespace Portfolio_Management.Infrastructure.Repository
         public async Task<bool> CheckIfExistAsync(Expression<Func<T, bool>> predicate) =>
             await _dbSet.AnyAsync(predicate);
 
-        public async Task<T> FindOrThrowAsync(long id) => await FindAsync(id) ?? throw new Exception("No data found");
+        public async Task<T> FindOrThrowAsync(long id)
+        {
+            try
+            {
+                if (await FindAsync(id) == null)
+                {
+                    throw new Exception("Not Item found");
+                }
+
+                return await FindAsync(id);
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+        }
 
         public IQueryable<T> GetQueryable() => _dbSet.AsQueryable();
 

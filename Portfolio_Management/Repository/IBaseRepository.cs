@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace Portfolio_Management.Infrastructure.Repository
+namespace Portfolio_Management.Repository
 {
     public interface IBaseRepository<T> where T : class
     {

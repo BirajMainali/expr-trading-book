@@ -1,4 +1,4 @@
-﻿namespace Portfolio_Management.Infrastructure.Enum
+﻿namespace Portfolio_Management.Enum
 {
     public enum TransactionType
     {

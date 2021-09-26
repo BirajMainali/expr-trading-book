@@ -10,8 +10,8 @@ using Portfolio_Management.Data;
 namespace Portfolio_Management.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210925061609_stock transaction")]
-    partial class stocktransaction
+    [Migration("20210926142900_stock transaction date")]
+    partial class stocktransactiondate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -34,7 +34,7 @@ namespace Portfolio_Management.Migrations
                     b.Property<decimal?>("ClosingRate")
                         .HasColumnType("numeric");
 
-                    b.Property<decimal>("OpeningRate")
+                    b.Property<decimal>("OpeningAmount")
                         .HasColumnType("numeric");
 
                     b.Property<string>("Prefix")
@@ -48,6 +48,9 @@ namespace Portfolio_Management.Migrations
 
                     b.Property<string>("StockName")
                         .HasColumnType("text");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
 

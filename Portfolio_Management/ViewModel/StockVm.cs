@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Portfolio_Management.ViewModel
 {
@@ -12,5 +13,9 @@ namespace Portfolio_Management.ViewModel
         public long Quantity { get; set; }
         [Required]
         public decimal OpeningAmount{get; set; }
+        [Required]
+        public DateTime TransactionDate { get; set; }
+        
+        public decimal? ClosingRate { get; set; }
     }
 }

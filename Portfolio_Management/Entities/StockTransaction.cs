@@ -1,6 +1,6 @@
 ﻿using System;
-using Portfolio_Management.Infrastructure.Enum;
-using Portfolio_Management.Infrastructure.Model;
+using Portfolio_Management.Enum;
+using Portfolio_Management.Model;
 
 namespace Portfolio_Management.Entities
 {
@@ -12,19 +12,6 @@ namespace Portfolio_Management.Entities
         public TransactionType TransactionType { get; set; }
         public double Price { get; set; }
         public DateTime TransactionDate { get; set; }
-
-        protected StockTransaction()
-        {
-        }
-
-        public StockTransaction(Stock stock, long quantity, TransactionType transactionType, double price,
-            DateTime transactionDate)
-        {
-            Stock = stock;
-            Quantity = quantity;
-            TransactionType = transactionType;
-            Price = price;
-            TransactionDate = transactionDate;
-        }
+        
     }
 }

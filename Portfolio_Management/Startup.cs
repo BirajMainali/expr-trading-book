@@ -22,6 +22,7 @@ namespace Portfolio_Management
         public void ConfigureServices(IServiceCollection services)
         {
             services.UseDiConfig(Configuration);
+            services.AddAutoMapper(typeof(Startup));
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

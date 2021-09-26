@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Portfolio_Management.Dto;
-using Portfolio_Management.Extension;
-using Portfolio_Management.Infrastructure.Enum;
+using Portfolio_Management.Enum;
 using Portfolio_Management.Repository.Interface;
 using Portfolio_Management.Services.Interface;
 using Portfolio_Management.ViewModel;
@@ -13,8 +10,8 @@ using Portfolio_Management.ViewModel;
 namespace Portfolio_Management.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
-    public class StockTransactionController : ControllerBase
+    [Route("api/[controller]/[action]")]
+    public class StockTransactionController : Controller
     {
         private readonly IStockTransactionRepository _transactionRepository;
         private readonly IStockTransactionService _transactionService;
@@ -28,37 +25,37 @@ namespace Portfolio_Management.Controllers
             _stockRepository = stockRepository;
         }
 
-        [HttpGet("transactions")]
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             try
             {
-                var transactions = await _transactionRepository.GetQueryable().Select(x => new
-                {
-                    StockName = x.Stock,
-                    Quantity = x.Quantity,
-                    Price = x.Price,
-                    TransactionDate = x.TransactionDate.ToShortDateString(),
-                    TransactionType = (x.TransactionType == TransactionType.Buy) ? "BUY" : "SELL",
-                }).ToListAsync();
-
-                return this.SendSuccess("transactions", transactions);
+                var transactions = await _transactionRepository.GetTransactions();
+                return Ok(transactions);
             }
             catch (Exception e)
             {
-                return this.SendError(e.Message);
+                return BadRequest(e.Message);
             }
         }
 
-        [HttpPost("AddTransaction")]
+        [HttpPost]
         public async Task<IActionResult> New(StockTransactionVm viewModel)
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    return UnprocessableEntity(viewModel);
+                }
+
                 var stock = await _stockRepository.FindOrThrowAsync(viewModel.StockId);
+                if (stock == null)
+                {
+                    return NotFound();
+                }
 
                 if (viewModel.TransactionType == TransactionType.Sell)
-
                 {
                     stock.ClosingRate += stock.ClosingRate * 10 / 100;
                     if (stock.ClosingRate > (decimal?)viewModel.Price)
@@ -72,36 +69,39 @@ namespace Portfolio_Management.Controllers
                 await _transactionService.RecordStockTransaction(dto);
                 if (dto.TransactionType == TransactionType.Buy)
                 {
-                    return this.SendSuccess($"{dto.Stock.Prefix} Added {dto.Quantity} at {dto.Price}");
+                    return Ok($"{dto.Stock.Prefix} Added {dto.Quantity} at {dto.Price}");
                 }
 
-                return this.SendSuccess($"{dto.Stock.Prefix} Sold {dto.Quantity} at {dto.Price}");
+                return Ok($"{dto.Stock.Prefix} Sold {dto.Quantity} at {dto.Price}");
             }
             catch (Exception e)
             {
-                return this.SendError(e.Message);
+                return BadRequest(e.Message);
             }
         }
 
-        [HttpGet("History/{id:long}")]
+        [HttpGet]
         public async Task<IActionResult> History(long id)
         {
             try
             {
-                var stock = await _stockRepository.FindOrThrowAsync(id);
-                var history = await _transactionRepository.GetQueryable().Where(x => x.StockId == id).Select(x => new
+                if (id < 0)
                 {
-                    StockName = x.Stock.StockName,
-                    Quantity = x.Quantity,
-                    Price = x.Price,
-                    TransactionDate = x.TransactionDate.ToShortDateString(),
-                    TransactionType = (x.TransactionType == TransactionType.Buy) ? "BUY" : "SELL",
-                }).ToListAsync();
-                return this.SendSuccess("history", history);
+                    return BadRequest("Invalid Id");
+                }
+
+                var stock = await _stockRepository.FindOrThrowAsync(id);
+                if (stock == null)
+                {
+                    return NotFound("No data found");
+                }
+
+                var history = await _transactionRepository.GetStockHistoryById(id);
+                return Ok(history);
             }
             catch (Exception e)
             {
-                return this.SendError(e.Message);
+                return BadRequest("Invalid Request");
             }
         }
     }

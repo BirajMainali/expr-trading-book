@@ -6,7 +6,7 @@ namespace Portfolio_Management.Services.Interface
 {
     public interface IStockService
     {
-        Task CreateStock(StockDto dto);
+        Task<Stock> CreateStock(StockDto dto);
         Task Remove(Stock stock);
         Task Update(Stock stock, StockDto dto);
     }

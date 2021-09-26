@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Portfolio_Management.Data;
@@ -9,9 +10,10 @@ using Portfolio_Management.Data;
 namespace Portfolio_Management.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210926135222_stock transaction")]
+    partial class stocktransaction
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -46,9 +48,6 @@ namespace Portfolio_Management.Migrations
 
                     b.Property<string>("StockName")
                         .HasColumnType("text");
-
-                    b.Property<DateTime>("TransactionDate")
-                        .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
 

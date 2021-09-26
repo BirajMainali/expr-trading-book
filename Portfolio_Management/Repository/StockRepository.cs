@@ -1,8 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Portfolio_Management.Entities;
-using Portfolio_Management.Infrastructure.Repository;
 using Portfolio_Management.Repository.Interface;
+using Portfolio_Management.ViewModel.ResponseViewModel;
 
 namespace Portfolio_Management.Repository
 {
@@ -20,5 +22,18 @@ namespace Portfolio_Management.Repository
             await CheckIfExistAsync(x =>
                 (excludedId == null || x.Id != excludedId) && x.Prefix.Trim().ToLower() == prefix.ToLower().Trim());
 
+        public async Task<IEnumerable<StockResponse>> GetStocks()
+        {
+            var stocks = await GetAllAsync();
+            return stocks.Select(x => new StockResponse()
+            {
+                StockName = x.StockName,
+                Quantity = x.Quantity,
+                OpeningRate = x.Quantity,
+                Prefix = x.Prefix,
+                ClosingRate = x.ClosingRate,
+                TransactionDate = x.RecDate.ToShortDateString()
+            }).ToList();
+        }
     }
 }

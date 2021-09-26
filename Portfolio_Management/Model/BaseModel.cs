@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Portfolio_Management.Infrastructure.Model
+namespace Portfolio_Management.Model
 {
     public class BaseModel
     {

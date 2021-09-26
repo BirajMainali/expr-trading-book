@@ -1,6 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Portfolio_Management.Entities;
-using Portfolio_Management.Infrastructure.Repository;
+using Portfolio_Management.ViewModel.ResponseViewModel;
 
 namespace Portfolio_Management.Repository.Interface
 {
@@ -8,5 +9,6 @@ namespace Portfolio_Management.Repository.Interface
     {
         Task<bool> IsNameUsed(string name, long? excludedId = null);
         Task<bool> IsPrefixUsed(string? prefix = null, long? excludedId = null);
+        Task<IEnumerable<StockResponse>> GetStocks();
     }
 }
