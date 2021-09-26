@@ -104,5 +104,12 @@ namespace Portfolio_Management.Controllers
                 return BadRequest("Invalid Request");
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Portfolio()
+        {
+            var res = await _transactionRepository.GetPortfolio();
+            return Ok(res);
+        }
     }
 }

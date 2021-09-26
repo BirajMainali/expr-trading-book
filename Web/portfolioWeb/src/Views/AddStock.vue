@@ -4,11 +4,12 @@ import axios from "axios";
 
 const viewModel = ref({
   id: Math.random(),
-  name: '',
+  stockName: '',
   quantity: 0,
   prefix: '',
-  openingAmount: 0,
-  date: Date.now().toFixed()
+  openingRate: 0,
+  closingRate: 0,
+  transactionDate: Date.now(),
 });
 
 let stocks = ref({
@@ -18,15 +19,15 @@ let stocks = ref({
 
 const LoadInitial = () => {
   const data = viewModel.value;
-  data.name = '';
+  data.stockName = '';
   data.quantity = 0;
   data.prefix = '';
-  data.openingAmount = 0;
+  data.openingRate = 0;
 }
 
 const getAddedStocks = async () => {
   try {
-    stocks.value.data = (await axios.get("/api/Stock/Stocks")).data.data;
+    stocks.value.data = (await axios.get("/api/Stock/Index")).data
     stocks.value.isLoading = false
   } catch (e) {
     console.warn(e);
@@ -36,10 +37,10 @@ const savePublish = async () => {
   try {
     if (!confirm("are you sure to publish")) return;
     const res = await axios.post("/api/Stock/New", {
-      StockName: viewModel.value.name,
+      StockName: viewModel.value.stockName,
       prefix: viewModel.value.prefix,
       Quantity: viewModel.value.quantity,
-      OpeningAmount: viewModel.value.openingAmount
+      OpeningAmount: viewModel.value.openingRate
     });
     stocks.value.data.push({...viewModel.value});
     LoadInitial();
@@ -52,7 +53,7 @@ const savePublish = async () => {
 const Remove = async (id) => {
   try {
     if (!confirm("are you sure to remove this stock")) return;
-    const res = await axios.post(`/api/Stock/Remove/${id}`);
+    const res = await axios.delete(`/api/Stock/Remove/${id}`);
     if (res.status === 200) {
       stocks.value.data = stocks.value.data.filter(x => x.id !== id);
     }
@@ -76,7 +77,7 @@ onMounted(async () => {
         <div class="col-4">
           <div class="form-group">
             <label for="Company">Publisher Company</label>
-            <input type="text" id="Company" v-model="viewModel.name" class="form-control"
+            <input type="text" id="Company" v-model="viewModel.stockName" class="form-control"
                    placeholder="Union life insurance" required>
           </div>
         </div>
@@ -96,7 +97,7 @@ onMounted(async () => {
         <div class="col">
           <div class="form-group">
             <label for="OpeningAmount">Opening Amount</label>
-            <input type="number" id="OpeningAmount" v-model="viewModel.openingAmount" class="form-control"
+            <input type="number" id="OpeningAmount" v-model="viewModel.openingRate" class="form-control"
                    placeholder="400" required>
           </div>
         </div>
@@ -119,18 +120,20 @@ onMounted(async () => {
           <td>Prefix</td>
           <td>Publish Date</td>
           <td>Quantity</td>
-          <td>Opening Amount</td>
+          <td>Opening Rate</td>
+          <td>Closing Rate</td>
           <td>Action</td>
         </tr>
         </thead>
         <tbody>
         <tr v-for="(stock,idx) in stocks.data" :key="idx">
           <td> {{ idx + 1 }}</td>
-          <td>{{ stock.name }}</td>
+          <td>{{ stock.stockName }}</td>
           <td>{{ stock.prefix }}</td>
-          <td>{{ stock.date }}</td>
+          <td>{{ stock.transactionDate }}</td>
           <td>{{ stock.quantity }}</td>
-          <td>{{ stock.openingAmount }}</td>
+          <td>{{ stock.openingRate }}</td>
+          <td>{{ stock.closingRate }}</td>
           <td>
             <button class="btn btn-sm btn-danger" @click.prevent="Remove(stock.id)"> Remove</button>
           </td>

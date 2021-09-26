@@ -28,6 +28,11 @@ namespace Portfolio_Management.Repository
             }).ToList();
         }
 
+        public async Task<List<StockTransaction>> GetPortfolio()
+        {
+            return await GetAllAsync();
+        }
+
         public async Task<IEnumerable<StockTransactionResponse>> GetStockHistoryById(long id)
         {
             var history = await GetAllAsync(x => x.StockId == id);

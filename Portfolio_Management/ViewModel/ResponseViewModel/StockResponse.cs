@@ -1,9 +1,8 @@
-﻿using System;
-
-namespace Portfolio_Management.ViewModel.ResponseViewModel
+﻿namespace Portfolio_Management.ViewModel.ResponseViewModel
 {
     public class StockResponse
     {
+        public long Id { get; set; }
         public string StockName { get; set; }
         public string Prefix { get; set; }
         public long Quantity { get; set; }

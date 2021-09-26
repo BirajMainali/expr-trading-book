@@ -27,11 +27,12 @@ namespace Portfolio_Management.Repository
             var stocks = await GetAllAsync();
             return stocks.Select(x => new StockResponse()
             {
+                Id = x.Id,
                 StockName = x.StockName,
                 Quantity = x.Quantity,
-                OpeningRate = x.Quantity,
+                OpeningRate = x.OpeningAmount,
                 Prefix = x.Prefix,
-                ClosingRate = x.ClosingRate,
+                ClosingRate = (x.ClosingRate) ?? x.OpeningAmount,
                 TransactionDate = x.RecDate.ToShortDateString()
             }).ToList();
         }

@@ -10,7 +10,7 @@
             <label>Stock</label>
             <select type="number" class="form-control" v-model="tradingViewModel.stockId">
               <option v-for="stock in tradingViewModel.StockData" :key="stock.id" :value="stock.id">
-                [ {{ stock.prefix }} ] {{ stock.name }}
+                [ {{ stock.prefix }} ] {{ stock.stockName }}
               </option>
             </select>
           </div>
@@ -31,7 +31,7 @@
         <div class="col">
           <div class="from-group">
             <label>Transaction Type</label>
-            <select type="number" class="form-control" v-model="tradingViewModel.TransactionType">
+            <select class="form-control" v-model.number="tradingViewModel.TransactionType">
               <option value="1">BUY</option>
               <option value="2">SELL</option>
             </select>
@@ -86,7 +86,7 @@ import axios from "axios";
 const tradingViewModel = ref({
   stockId: 0,
   Quantity: 0,
-  TransactionType: null,
+  TransactionType: '',
   Price: 0,
   TransactionDate: '',
   StockData: [],
@@ -98,10 +98,10 @@ const orderTransaction = async () => {
   try {
     if (!confirm("are you sure to Proceed")) return;
     if (!tradingViewModel.value.Quantity || !tradingViewModel.value.TransactionType || !tradingViewModel.value.TransactionDate) return;
-    await axios.post(`/api/StockTransaction/AddTransaction`, {
+    const res = await axios.post(`/api/StockTransaction/New`, {
       stockId: tradingViewModel.value.stockId,
       quantity: tradingViewModel.value.Quantity,
-      transactionType: tradingViewModel.value.TransactionType,
+      TransactionType: tradingViewModel.value.TransactionType,
       price: tradingViewModel.value.Price,
       transactionDate: tradingViewModel.value.TransactionDate
     });
@@ -111,12 +111,12 @@ const orderTransaction = async () => {
 }
 
 const LoadTradingStock = async () => {
-  tradingViewModel.value.StockData = (await axios.get("/api/Stock/Stocks")).data.data;
+  tradingViewModel.value.StockData = (await axios.get("/api/Stock/Index")).data;
 }
 
 watch(() => tradingViewModel.value.stockId, () => {
   setTimeout(async () => {
-    tradingViewModel.value.History = (await axios.get(`/api/StockTransaction/History/${tradingViewModel.value.stockId}`)).data.data;
+    tradingViewModel.value.History = (await axios.get(`/api/StockTransaction/History/?id=${tradingViewModel.value.stockId}`)).data;
   }, 0);
 })
 

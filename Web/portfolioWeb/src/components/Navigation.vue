@@ -25,7 +25,7 @@
 
 <script>
 export default {
-  name: "Navigation",
+  stockName: "Navigation",
 }
 </script>
 

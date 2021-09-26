@@ -6,7 +6,7 @@
 import DashboardWidget from "../components/DashboardWidget.vue";
 
 export default {
-  name: "Dashboard",
+  stockName: "Dashboard",
   components: {DashboardWidget}
 }
 </script>
