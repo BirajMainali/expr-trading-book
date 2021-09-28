@@ -62,7 +62,8 @@ namespace Portfolio_Management.Controllers
         {
             try
             {
-                if (!ModelState.IsValid) return new JsonResult("Something went wrong") { StatusCode = 500 };
+                if (!ModelState.IsValid) return UnprocessableEntity(viewModel);
+
                 var dto = _mapper.Map<StockDto>(viewModel);
                 var stock = await _stockService.CreateStock(dto);
                 return CreatedAtAction("Details", new { stock.Id }, stock);
