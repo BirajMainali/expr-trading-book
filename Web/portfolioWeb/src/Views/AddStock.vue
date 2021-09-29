@@ -12,6 +12,7 @@ const viewModel = ref({
   transactionDate: Date.now(),
 });
 
+
 let stocks = ref({
   isLoading: true,
   data: []
@@ -27,10 +28,10 @@ const LoadInitial = () => {
 
 const getAddedStocks = async () => {
   try {
-    stocks.value.data = (await axios.get("/api/Stock/Index")).data
+    stocks.value.data = (await axios.get("/api/Stock/index")).data
     stocks.value.isLoading = false
   } catch (e) {
-    console.warn(e);
+    console.log(e)
   }
 }
 const savePublish = async () => {
@@ -42,12 +43,13 @@ const savePublish = async () => {
       Quantity: viewModel.value.quantity,
       OpeningAmount: viewModel.value.openingRate
     });
-    stocks.value.data.push({...viewModel.value});
-    LoadInitial();
-    console.warn(res.data.notify)
+    if (res.status === 200) {
+      stocks.value.data.push({...viewModel.value});
+      LoadInitial();
+      console.log(res);
+    }
   } catch (e) {
-
-    console.warn(e);
+    console.log(e.message);
   }
 }
 const Remove = async (id) => {
@@ -56,9 +58,10 @@ const Remove = async (id) => {
     const res = await axios.delete(`/api/Stock/Remove/${id}`);
     if (res.status === 200) {
       stocks.value.data = stocks.value.data.filter(x => x.id !== id);
+      console.log(res);
     }
   } catch (e) {
-    console.warn(e);
+    console.log(e.message);
   }
 }
 
@@ -137,7 +140,6 @@ onMounted(async () => {
           <td>
             <button class="btn btn-sm btn-danger" @click.prevent="Remove(stock.id)"> Remove</button>
           </td>
-          <td></td>
         </tr>
         </tbody>
       </table>

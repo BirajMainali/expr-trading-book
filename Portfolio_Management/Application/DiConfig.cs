@@ -1,10 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Portfolio_Management.Application;
 using Portfolio_Management.Data;
 
-namespace Portfolio_Management
+namespace Portfolio_Management.Application
 {
     public static class DiConfig
     {

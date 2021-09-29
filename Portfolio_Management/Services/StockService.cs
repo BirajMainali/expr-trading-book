@@ -31,6 +31,7 @@ namespace Portfolio_Management.Services
                 await _stockValuator.EnsureUniqueStock(dto.StockName);
                 await _stockValuator.EnsureUniquePrefix(dto.Prefix);
                 var stock = _mapper.Map<Stock>(dto);
+                stock.ClosingRate = stock.OpeningAmount;
                 await _stockRepository.CreateAsync(stock);
                 await _stockRepository.FlushAsync();
                 tsc.Complete();

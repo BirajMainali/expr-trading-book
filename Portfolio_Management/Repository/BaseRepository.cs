@@ -46,22 +46,7 @@ namespace Portfolio_Management.Repository
         public async Task<bool> CheckIfExistAsync(Expression<Func<T, bool>> predicate) =>
             await _dbSet.AnyAsync(predicate);
 
-        public async Task<T> FindOrThrowAsync(long id)
-        {
-            try
-            {
-                if (await FindAsync(id) == null)
-                {
-                    throw new Exception("Not Item found");
-                }
-
-                return await FindAsync(id);
-            }
-            catch (Exception e)
-            {
-                throw;
-            }
-        }
+        public async Task<T> FindOrThrowAsync(long id) => await FindAsync(id) ?? throw new Exception("item not found");
 
         public IQueryable<T> GetQueryable() => _dbSet.AsQueryable();
 

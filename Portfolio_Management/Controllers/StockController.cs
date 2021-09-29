@@ -87,11 +87,11 @@ namespace Portfolio_Management.Controllers
                 var stock = await _stockRepository.FindOrThrowAsync(id);
                 if (stock == null)
                 {
-                    throw new Exception("No Data Found");
+                    return NotFound();
                 }
 
                 await _stockService.Remove(stock);
-                return Ok();
+                return NoContent();
             }
             catch (Exception e)
             {

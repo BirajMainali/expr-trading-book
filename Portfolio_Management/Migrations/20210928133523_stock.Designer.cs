@@ -10,8 +10,8 @@ using Portfolio_Management.Data;
 namespace Portfolio_Management.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210926135222_stock transaction")]
-    partial class stocktransaction
+    [Migration("20210928133523_stock")]
+    partial class stock
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -49,9 +49,12 @@ namespace Portfolio_Management.Migrations
                     b.Property<string>("StockName")
                         .HasColumnType("text");
 
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("timestamp without time zone");
+
                     b.HasKey("Id");
 
-                    b.ToTable("stock", "Stock");
+                    b.ToTable("stocks", "stock");
                 });
 
             modelBuilder.Entity("Portfolio_Management.Entities.StockTransaction", b =>

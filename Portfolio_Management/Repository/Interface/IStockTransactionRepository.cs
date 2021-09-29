@@ -9,7 +9,7 @@ namespace Portfolio_Management.Repository.Interface
     public interface IStockTransactionRepository : IBaseRepository<StockTransaction>
     {
         Task<IEnumerable<StockTransactionResponse>> GetTransactions();
-        Task<List<StockTransaction>> GetPortfolio();
+        Task<List<PortfolioResponse>> GetPortfolio();
         Task<IEnumerable<StockTransactionResponse>> GetStockHistoryById(long id);
         Task<double> GetInvestment(long id);
         Task<double> GetTotalSold(long id);

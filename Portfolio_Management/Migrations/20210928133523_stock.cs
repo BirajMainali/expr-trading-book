@@ -4,19 +4,16 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Portfolio_Management.Migrations
 {
-    public partial class stocktransaction : Migration
+    public partial class stock : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.EnsureSchema(
-                name: "Stock");
-
-            migrationBuilder.EnsureSchema(
                 name: "stock");
 
             migrationBuilder.CreateTable(
-                name: "stock",
-                schema: "Stock",
+                name: "stocks",
+                schema: "stock",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
@@ -25,13 +22,14 @@ namespace Portfolio_Management.Migrations
                     Prefix = table.Column<string>(type: "text", nullable: true),
                     Quantity = table.Column<long>(type: "bigint", nullable: false),
                     OpeningAmount = table.Column<decimal>(type: "numeric", nullable: false),
+                    TransactionDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     ClosingRate = table.Column<decimal>(type: "numeric", nullable: true),
                     AuditLog = table.Column<string>(type: "text", nullable: true),
                     RecDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_stock", x => x.Id);
+                    table.PrimaryKey("PK_stocks", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -53,10 +51,10 @@ namespace Portfolio_Management.Migrations
                 {
                     table.PrimaryKey("PK_stock_transaction", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_stock_transaction_stock_StockId",
+                        name: "FK_stock_transaction_stocks_StockId",
                         column: x => x.StockId,
-                        principalSchema: "Stock",
-                        principalTable: "stock",
+                        principalSchema: "stock",
+                        principalTable: "stocks",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -75,8 +73,8 @@ namespace Portfolio_Management.Migrations
                 schema: "stock");
 
             migrationBuilder.DropTable(
-                name: "stock",
-                schema: "Stock");
+                name: "stocks",
+                schema: "stock");
         }
     }
 }

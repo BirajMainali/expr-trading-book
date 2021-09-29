@@ -52,7 +52,7 @@ namespace Portfolio_Management.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("stock", "Stock");
+                    b.ToTable("stocks", "stock");
                 });
 
             modelBuilder.Entity("Portfolio_Management.Entities.StockTransaction", b =>

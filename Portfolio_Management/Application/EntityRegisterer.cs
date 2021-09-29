@@ -5,10 +5,12 @@ namespace Portfolio_Management.Application
 {
     public static class EntityRegisterer
     {
+        private const string Stock = "stock";
+
         public static ModelBuilder AddModels(this ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Stock>().ToTable("stock", schema: "Stock");
-            modelBuilder.Entity<StockTransaction>().ToTable("stock_transaction", "stock");
+            modelBuilder.Entity<Stock>().ToTable("stocks", Stock);
+            modelBuilder.Entity<StockTransaction>().ToTable("stock_transaction", Stock);
             return modelBuilder;
         }
     }

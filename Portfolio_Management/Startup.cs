@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Portfolio_Management.Application;
 using Portfolio_Management.Data;
 
 namespace Portfolio_Management
