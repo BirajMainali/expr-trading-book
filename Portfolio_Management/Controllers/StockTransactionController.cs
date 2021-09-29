@@ -58,7 +58,7 @@ namespace Portfolio_Management.Controllers
                 if (viewModel.TransactionType == TransactionType.Sell)
                 {
                     stock.ClosingRate += stock.ClosingRate * 10 / 100;
-                    if (stock.ClosingRate > (decimal?)viewModel.Price)
+                    if (stock.ClosingRate < (decimal?)viewModel.Price)
                     {
                         throw new Exception($"Max is {stock.ClosingRate}");
                     }
@@ -66,13 +66,16 @@ namespace Portfolio_Management.Controllers
 
                 var dto = new StockTransactionDto(stock, viewModel.Quantity, viewModel.TransactionType, viewModel.Price,
                     viewModel.TransactionDate);
-                await _transactionService.RecordStockTransaction(dto);
-                if (dto.TransactionType == TransactionType.Buy)
-                {
-                    return Ok($"{dto.Stock.Prefix} Added {dto.Quantity} at {dto.Price}");
-                }
+                var transaction = await _transactionService.RecordStockTransaction(dto);
 
-                return Ok($"{dto.Stock.Prefix} Sold {dto.Quantity} at {dto.Price}");
+                var history = new
+                {
+                    transaction.StockId, transaction.Price, transaction.Quantity,
+                    stock = transaction.Stock.StockName,
+                    TransactionDate = transaction.TransactionDate.ToShortDateString(),
+                    TransactionType = (transaction.TransactionType == TransactionType.Buy) ? "BUY" : "SELL"
+                };
+                return CreatedAtAction("History", new { stock.Id }, history);
             }
             catch (Exception e)
             {
@@ -110,6 +113,20 @@ namespace Portfolio_Management.Controllers
         {
             var res = await _transactionRepository.GetPortfolio();
             return Ok(res);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DashBoard()
+        {
+            try
+            {
+                var data = await _transactionRepository.GetSummary();
+                return Ok(data);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
     }
 }

@@ -1,15 +1,25 @@
 <script setup>
+import {notify} from "@kyvg/vue3-notification";
 import {onMounted, ref} from 'vue'
 import axios from "axios";
 
+
+const getDate = () => {
+  let today = new Date();
+  const dd = String(today.getDate()).padStart(2, '0');
+  const mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+  const yyyy = today.getFullYear();
+  today = mm + '/' + dd + '/' + yyyy;
+  return today;
+}
+
 const viewModel = ref({
-  id: Math.random(),
   stockName: '',
   quantity: 0,
   prefix: '',
   openingRate: 0,
   closingRate: 0,
-  transactionDate: Date.now(),
+  transactionDate: getDate(),
 });
 
 
@@ -31,7 +41,9 @@ const getAddedStocks = async () => {
     stocks.value.data = (await axios.get("/api/Stock/index")).data
     stocks.value.isLoading = false
   } catch (e) {
-    console.log(e)
+    notify({
+      title: e.message
+    });
   }
 }
 const savePublish = async () => {
@@ -43,25 +55,33 @@ const savePublish = async () => {
       Quantity: viewModel.value.quantity,
       OpeningAmount: viewModel.value.openingRate
     });
-    if (res.status === 200) {
-      stocks.value.data.push({...viewModel.value});
+    if (res.status === 200 || res.status === 201) {
+      stocks.value.data.push({...res.data});
       LoadInitial();
-      console.log(res);
+      notify({
+        title: "Ready for transaction"
+      })
     }
   } catch (e) {
-    console.log(e.message);
+    notify({
+      title: e.message
+    });
   }
 }
 const Remove = async (id) => {
   try {
     if (!confirm("are you sure to remove this stock")) return;
     const res = await axios.delete(`/api/Stock/Remove/${id}`);
-    if (res.status === 200) {
+    if (res.status === 200 || res.status === 204) {
       stocks.value.data = stocks.value.data.filter(x => x.id !== id);
-      console.log(res);
+      notify({
+        title: "Removed"
+      })
     }
   } catch (e) {
-    console.log(e.message);
+    notify({
+      title: e.message
+    });
   }
 }
 
@@ -106,8 +126,8 @@ onMounted(async () => {
         </div>
         <div class="col">
           <div class="btn-group">
-            <button type="submit" class="btn btn-danger btn-sm mt-4" @click.prevent="savePublish"><i
-                class="fa fa-upload"></i> Publish
+            <button type="submit" class="btn btn-warning btn-sm mt-4" @click.prevent="savePublish"><i
+                class="fa fa-upload"></i> Save
             </button>
           </div>
         </div>
@@ -138,7 +158,7 @@ onMounted(async () => {
           <td>{{ stock.openingRate }}</td>
           <td>{{ stock.closingRate }}</td>
           <td>
-            <button class="btn btn-sm btn-danger" @click.prevent="Remove(stock.id)"> Remove</button>
+            <button class="btn btn-sm btn-danger  " @click.prevent="Remove(stock.id)"><i class="fa fa-trash"></i></button>
           </td>
         </tr>
         </tbody>

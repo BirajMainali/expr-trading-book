@@ -84,23 +84,35 @@ group by
             }).ToList();
         }
 
-        public async Task<double> GetInvestment(long id)
-            => await GetQueryable().Where(x => x.StockId == id && x.TransactionType == TransactionType.Buy)
+        public async Task<double> GetInvestment()
+            => await GetQueryable().Where(x => x.TransactionType == TransactionType.Buy)
                 .Select(x => x.Price).SumAsync();
 
-        public async Task<double> GetTotalSold(long id)
-            => await GetQueryable().Where(x => x.StockId == id && x.TransactionType == TransactionType.Sell)
+        public async Task<double> GetTotalSold()
+            => await GetQueryable().Where(x => x.TransactionType == TransactionType.Sell)
                 .Select(x => x.Price).SumAsync();
 
-        public async Task<long> GetTotalPurchaseQuantity(long id)
-            => await GetQueryable().Where(x => x.TransactionType == TransactionType.Buy).Select(x => x.Quantity)
-                .SumAsync();
+        public async Task<decimal?> GetCurrentValuation()
+        {
+            var closing = await GetQueryable().Include(x => x.Stock).Select(x => x.Stock.ClosingRate).SumAsync();
+            var buyQuantity = await GetQueryable().Where(x => x.TransactionType == TransactionType.Buy)
+                .Select(x => x.Quantity).SumAsync();
+            var salesQuantity = await GetQueryable().Where(x => x.TransactionType == TransactionType.Sell)
+                .Select(x => x.Quantity).SumAsync();
+            return (buyQuantity - salesQuantity) * closing;
+        }
 
-        public async Task<long> GetTotalSoldQuantity(long id)
-            => await GetQueryable().Where(x => x.TransactionType == TransactionType.Sell).Select(x => x.Quantity)
-                .SumAsync();
+        public async Task<double> TotalUnit()
+            => await GetQueryable().Where(x => x.TransactionType == TransactionType.Buy)
+                .Select(x => x.Quantity).SumAsync();
 
-        public async Task<long> GetRemaining(long id)
-            => await GetTotalPurchaseQuantity(id) - await GetTotalSoldQuantity(id);
+        public async Task<DashBoardResponseVm> GetSummary()
+            => new DashBoardResponseVm()
+            {
+                TotalInvestment = await GetInvestment(),
+                TotalSold = await GetTotalSold(),
+                CurrentAmount = await GetCurrentValuation(),
+                TotalUnit = await TotalUnit()
+            };
     }
 }

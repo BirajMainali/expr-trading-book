@@ -1,6 +1,6 @@
 import {createRouter, createWebHistory} from 'vue-router'
 import Dashboard from "../Views/Dashboard.vue";
-import AddStock from "../Views/AddStock.vue";
+import Publish from "../Views/Publish.vue";
 import Trading from "../Views/Trading.vue"
 import Portfolio from "../Views/Portfolio.vue"
 
@@ -11,9 +11,9 @@ const routes = [{
     component: Dashboard
 },
     {
-        path: "/AddStock",
-        name: AddStock,
-        component: AddStock
+        path: "/Publish",
+        name: Publish,
+        component: Publish
 
     }, {
     path: "/Trading",

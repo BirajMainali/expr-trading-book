@@ -4,7 +4,7 @@
       <div class="card-title">My Portfolio</div>
     </div>
     <div class="card-body">
-      <table class="table table-striped">
+      <table class="table table-striped table-bordered table-hover">
         <thead>
         <tr>
           <td>#</td>
@@ -22,11 +22,11 @@
         <tr v-for="(item,idx) in state.portfolio" :key="idx">
           <td>{{ idx + 1 }}</td>
           <td>{{ item.stock }}</td>
-          <td>{{item.totalSold}}</td>
+          <td>{{ item.totalSold }}</td>
           <td>{{ item.totalUnit }}</td>
           <td>{{ item.totalInvestment }}</td>
           <td>{{ item.soldAmount }}</td>
-          <td>{{item.remaining}}</td>
+          <td>{{ item.remaining }}</td>
           <td>{{ item.currentAmount }}</td>
           <td>{{ item.overAllProfit }}</td>
         </tr>

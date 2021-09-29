@@ -21,7 +21,7 @@ namespace Portfolio_Management.Services
             _mapper = mapper;
         }
 
-        public async Task RecordStockTransaction(StockTransactionDto dto)
+        public async Task<StockTransaction> RecordStockTransaction(StockTransactionDto dto)
         {
             using var tsc = TransactionScopeHelper.Scope();
             try
@@ -35,6 +35,7 @@ namespace Portfolio_Management.Services
                 await _stockTransactionRepository.CreateAsync(transaction);
                 await _stockTransactionRepository.FlushAsync();
                 tsc.Complete();
+                return transaction;
             }
             catch (Exception e)
             {

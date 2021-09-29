@@ -1,10 +1,11 @@
 ﻿using System.Threading.Tasks;
 using Portfolio_Management.Dto;
+using Portfolio_Management.Entities;
 
 namespace Portfolio_Management.Services.Interface
 {
     public interface IStockTransactionService
     {
-        Task RecordStockTransaction(StockTransactionDto dto);
+        Task<StockTransaction> RecordStockTransaction(StockTransactionDto dto);
     }
 }

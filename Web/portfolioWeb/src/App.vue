@@ -5,7 +5,9 @@ import Navigation from "./components/Navigation.vue";
 <template>
   <navigation/>
   <router-view/>
+  <notifications position="bottom right" />
 </template>
+
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Karla:wght@500&display=swap');

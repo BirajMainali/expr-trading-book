@@ -9,7 +9,7 @@
           <div class="form-group">
             <label>Stock</label>
             <select type="number" class="form-control" v-model="tradingViewModel.stockId">
-              <option v-for="stock in tradingViewModel.StockData" :key="stock.id" :value="stock.id">
+              <option v-for="stock in state.StockData" :key="stock.id" :value="stock.id">
                 [ {{ stock.prefix }} ] {{ stock.stockName }}
               </option>
             </select>
@@ -25,7 +25,7 @@
         <div class="col">
           <div class="form-group">
             <label>Price</label>
-            <input type="text" v-model="tradingViewModel.Price" class="form-control">
+            <input type="number" v-model="tradingViewModel.Price" class="form-control">
           </div>
         </div>
         <div class="col">
@@ -45,7 +45,7 @@
         </div>
         <div class="col">
           <div class="btn-group">
-            <button class="btn mt-4 btn-danger" @click.prevent="orderTransaction"> Proceed</button>
+            <button class="btn mt-4 btn-warning brn-sm" @click.prevent="orderTransaction"><i class="fa fa-check-circle"></i> Add</button>
           </div>
         </div>
       </div>
@@ -64,9 +64,9 @@
         </tr>
         </thead>
         <tbody>
-        <tr v-for="(stock,idx) in tradingViewModel.History" :key="idx">
+        <tr v-for="(stock,idx) in state.History" :key="idx">
           <td>{{ idx + 1 }}</td>
-          <td>{{ stock.stockName }}</td>
+          <td>{{ stock.stock }}</td>
           <td>{{ stock.transactionType }}</td>
           <td>{{ stock.transactionDate }}</td>
           <td>{{ stock.quantity }}</td>
@@ -82,6 +82,7 @@
 <script setup>
 import {onMounted, ref, watch} from "vue";
 import axios from "axios";
+import {notify} from "@kyvg/vue3-notification";
 
 const tradingViewModel = ref({
   stockId: 0,
@@ -89,10 +90,20 @@ const tradingViewModel = ref({
   TransactionType: '',
   Price: 0,
   TransactionDate: '',
+})
+const state = ref({
   StockData: [],
   History: [],
 })
 
+const loadInitial = () => {
+  const temp = tradingViewModel.value;
+  temp.stockId = 0;
+  temp.Quantity = 0;
+  temp.TransactionDate = '';
+  temp.Price = 0;
+  temp.TransactionDate = '';
+}
 
 const orderTransaction = async () => {
   try {
@@ -101,22 +112,33 @@ const orderTransaction = async () => {
     const res = await axios.post(`/api/StockTransaction/New`, {
       stockId: tradingViewModel.value.stockId,
       quantity: tradingViewModel.value.Quantity,
-      TransactionType: tradingViewModel.value.TransactionType,
+      transactionType: tradingViewModel.value.TransactionType,
       price: tradingViewModel.value.Price,
       transactionDate: tradingViewModel.value.TransactionDate
     });
+    if (res.status === 200 || res.status === 201) {
+      state.value.History.push({...res.data});
+      loadInitial();
+      notify({
+        title: "Transaction Completed",
+      });
+    }
   } catch (e) {
-    console.log(e.message)
+    notify({
+      title: e.message
+    });
   }
 }
-
 const LoadTradingStock = async () => {
-  tradingViewModel.value.StockData = (await axios.get("/api/Stock/Index")).data;
+  state.value.StockData = (await axios.get("/api/Stock/Index")).data;
 }
 
 watch(() => tradingViewModel.value.stockId, () => {
+  const id = tradingViewModel.value.stockId;
   setTimeout(async () => {
-    tradingViewModel.value.History = (await axios.get(`/api/StockTransaction/History/?id=${tradingViewModel.value.stockId}`)).data;
+    if (id !== 0 || id) {
+      state.value.History = (await axios.get(`/api/StockTransaction/History/?id=${id}`)).data;
+    }
   }, 0);
 })
 
