@@ -7,5 +7,6 @@ namespace Portfolio_Management.Services.Interface
     public interface IStockTransactionService
     {
         Task<StockTransaction> RecordStockTransaction(StockTransactionDto dto);
+        Task RemoveTransaction(StockTransaction stockTransaction);
     }
 }

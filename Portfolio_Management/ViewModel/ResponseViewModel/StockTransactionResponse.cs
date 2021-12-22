@@ -2,6 +2,7 @@
 {
     public class StockTransactionResponse
     {
+        public long Id { get; set; }
         public string Stock { get; set; }
         public long Quantity { get; set; }
         public string TransactionType { get; set; }

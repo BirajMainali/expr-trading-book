@@ -45,7 +45,7 @@
         </div>
         <div class="col">
           <div class="btn-group">
-            <button class="btn mt-4 btn-warning brn-sm" @click.prevent="orderTransaction"><i class="fa fa-check-circle"></i> Add</button>
+            <button class="btn mt-4 btn-warning brn-sm" @click.prevent="orderedTransaction"><i class="fa fa-check-circle"></i> Add</button>
           </div>
         </div>
       </div>
@@ -61,6 +61,7 @@
           <td>Quantity</td>
           <td>Price</td>
           <td>Investment</td>
+          <td>Action</td>
         </tr>
         </thead>
         <tbody>
@@ -72,6 +73,9 @@
           <td>{{ stock.quantity }}</td>
           <td>{{ stock.price }}</td>
           <td>{{ stock.quantity * stock.price }}</td>
+           <td>
+            <button class="btn btn-sm btn-danger  " @click.prevent="Remove(stock.id)"><i class="fa fa-trash"></i></button>
+          </td>
         </tr>
         </tbody>
       </table>
@@ -85,6 +89,7 @@ import axios from "axios";
 import {notify} from "@kyvg/vue3-notification";
 
 const tradingViewModel = ref({
+  Id: 0,
   stockId: 0,
   Quantity: 0,
   TransactionType: '',
@@ -105,7 +110,7 @@ const loadInitial = () => {
   temp.TransactionDate = '';
 }
 
-const orderTransaction = async () => {
+const orderedTransaction = async () => {
   try {
     if (!confirm("are you sure to Proceed")) return;
     if (!tradingViewModel.value.Quantity || !tradingViewModel.value.TransactionType || !tradingViewModel.value.TransactionDate) return;
@@ -125,10 +130,28 @@ const orderTransaction = async () => {
     }
   } catch (e) {
     notify({
+      title: e
+    });
+  }
+}
+
+const Remove = async (id) => {
+  try {
+    if (!confirm("are you sure to remove this transaction")) return;
+    const res = await axios.delete(`/api/StockTransaction/Remove/${id}`);
+    if (res.status === 200 || res.status === 204) {
+      state.value.History =state.value.History.filter(x => x.id !== id);
+      notify({
+        title: "Removed"
+      })
+    }
+  } catch (e) {
+    notify({
       title: e.message
     });
   }
 }
+
 const LoadTradingStock = async () => {
   state.value.StockData = (await axios.get("/api/Stock/Index")).data;
 }

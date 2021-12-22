@@ -49,6 +49,14 @@ namespace Portfolio_Management.Controllers
                     return UnprocessableEntity(viewModel);
                 }
 
+                if (viewModel.TransactionType == TransactionType.Sell)
+                    await ValidateRemainingStockAfterSell(viewModel.StockId);
+                
+                if (viewModel.Price < 0)
+                {
+                    throw new Exception("Stock price can not be negative.");
+                }
+
                 var stock = await _stockRepository.FindOrThrowAsync(viewModel.StockId);
                 if (stock == null)
                 {
@@ -70,12 +78,32 @@ namespace Portfolio_Management.Controllers
 
                 var history = new
                 {
-                    transaction.StockId, transaction.Price, transaction.Quantity,
+                    transaction.Id, transaction.StockId, transaction.Price, transaction.Quantity,
                     stock = transaction.Stock.StockName,
                     TransactionDate = transaction.TransactionDate.ToShortDateString(),
                     TransactionType = (transaction.TransactionType == TransactionType.Buy) ? "BUY" : "SELL"
                 };
                 return CreatedAtAction("History", new { stock.Id }, history);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpDelete("{id:long}")]
+        public async Task<IActionResult> Remove(long id)
+        {
+            try
+            {
+                var transaction = await _transactionRepository.FindOrThrowAsync(id);
+                if (transaction == null)
+                {
+                    return NotFound();
+                }
+
+                await _transactionService.RemoveTransaction(transaction);
+                return NoContent();
             }
             catch (Exception e)
             {
@@ -126,6 +154,16 @@ namespace Portfolio_Management.Controllers
             catch (Exception e)
             {
                 return BadRequest(e.Message);
+            }
+        }
+
+        private async Task ValidateRemainingStockAfterSell(long stockId)
+        {
+            var investment = await _transactionRepository.GetInvestment(stockId);
+            var totalSales = await _transactionRepository.GetTotalSold(stockId);
+            if ((investment - totalSales) >= 0)
+            {
+                throw new Exception("Insufficient Quantity");
             }
         }
     }

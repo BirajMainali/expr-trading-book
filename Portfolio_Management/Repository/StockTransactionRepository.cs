@@ -76,6 +76,7 @@ group by
             var history = await GetAllAsync(x => x.StockId == id);
             return history.Select(x => new StockTransactionResponse()
             {
+                Id = x.Id,
                 Stock = x.Stock.StockName,
                 Quantity = x.Quantity,
                 Price = x.Price,
@@ -84,12 +85,14 @@ group by
             }).ToList();
         }
 
-        public async Task<double> GetInvestment()
-            => await GetQueryable().Where(x => x.TransactionType == TransactionType.Buy)
+        public async Task<double> GetInvestment(long? stockId = null)
+            => await GetQueryable().Where(x =>
+                    x.TransactionType == TransactionType.Buy && (x.StockId == null || x.StockId == stockId))
                 .Select(x => x.Price).SumAsync();
 
-        public async Task<double> GetTotalSold()
-            => await GetQueryable().Where(x => x.TransactionType == TransactionType.Sell)
+        public async Task<double> GetTotalSold(long? stockId = null)
+            => await GetQueryable().Where(x =>
+                    x.TransactionType == TransactionType.Sell && (x.StockId == null || x.StockId == stockId))
                 .Select(x => x.Price).SumAsync();
 
         public async Task<decimal?> GetCurrentValuation()

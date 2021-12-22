@@ -10,8 +10,8 @@ namespace Portfolio_Management.Repository.Interface
         Task<IEnumerable<StockTransactionResponse>> GetTransactions();
         Task<List<PortfolioResponse>> GetPortfolio();
         Task<IEnumerable<StockTransactionResponse>> GetStockHistoryById(long id);
-        Task<double> GetInvestment();
-        Task<double> GetTotalSold();
+        Task<double> GetInvestment(long? stockId = null);
+        Task<double> GetTotalSold(long? stockId = null);
         Task<decimal?> GetCurrentValuation();
         Task<DashBoardResponseVm> GetSummary();
         Task<double> TotalUnit();

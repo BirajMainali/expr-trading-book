@@ -9,7 +9,7 @@
         <tr>
           <td>#</td>
           <td>Stock</td>
-          <td>In</td>
+             <td>In</td>
           <td>Out</td>
           <td>Investment</td>
           <td>Sold</td>
@@ -22,8 +22,8 @@
         <tr v-for="(item,idx) in state.portfolio" :key="idx">
           <td>{{ idx + 1 }}</td>
           <td>{{ item.stock }}</td>
-          <td>{{ item.totalSold }}</td>
           <td>{{ item.totalUnit }}</td>
+          <td>{{ item.totalSold }}</td>
           <td>{{ item.totalInvestment }}</td>
           <td>{{ item.soldAmount }}</td>
           <td>{{ item.remaining }}</td>

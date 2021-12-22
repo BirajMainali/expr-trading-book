@@ -63,6 +63,7 @@ const savePublish = async () => {
       })
     }
   } catch (e) {
+      console.log(e);
     notify({
       title: e.message
     });
@@ -79,6 +80,7 @@ const Remove = async (id) => {
       })
     }
   } catch (e) {
+    console.log(e);
     notify({
       title: e.message
     });
